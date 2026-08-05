@@ -249,123 +249,14 @@ characterLabels.forEach((label) => {
   });
 });
 
-const mallowAppTrack = document.querySelector("#mallowAppTrack");
-const mallowLilaEntry = document.querySelector("#mallowLilaEntry");
-const mallowAppNext = document.querySelector("#mallowAppNext");
-const mallowAppProgress = Array.from(document.querySelectorAll(".mallow-app-progress span"));
-
-if (mallowAppTrack) {
-  let activeAppScene = 0;
-  let appStoryActivated = false;
-  let scrollFrame = 0;
-  let dragStartX = 0;
-  let dragStartScroll = 0;
-  let dragging = false;
-  let wheelLockedUntil = 0;
-
-  const updateAppProgress = () => {
-    activeAppScene = Math.max(0, Math.min(2, Math.round(mallowAppTrack.scrollLeft / mallowAppTrack.clientWidth)));
-    mallowAppProgress.forEach((item, index) => item.classList.toggle("active", index === activeAppScene));
-  };
-
-  const goToAppScene = (index) => {
-    activeAppScene = Math.max(0, Math.min(2, index));
-    appStoryActivated = true;
-    mallowAppTrack.classList.add("is-active");
-    mallowAppTrack.scrollTo({
-      left: activeAppScene * mallowAppTrack.clientWidth,
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
-    mallowAppProgress.forEach((item, itemIndex) => item.classList.toggle("active", itemIndex === activeAppScene));
-  };
-
-  mallowLilaEntry?.addEventListener("click", () => goToAppScene(1));
-  mallowAppNext?.addEventListener("click", () => goToAppScene(2));
-
-  const activateAppControlWithKeyboard = (control, action) => {
-    control?.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      action();
-    });
-  };
-
-  activateAppControlWithKeyboard(mallowLilaEntry, () => goToAppScene(1));
-  activateAppControlWithKeyboard(mallowAppNext, () => goToAppScene(2));
-
-  mallowAppTrack.addEventListener("scroll", () => {
-    window.cancelAnimationFrame(scrollFrame);
-    scrollFrame = window.requestAnimationFrame(updateAppProgress);
-  });
-
-  mallowAppTrack.addEventListener(
-    "wheel",
-    (event) => {
-      if (!appStoryActivated) return;
-      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      const maxScroll = mallowAppTrack.scrollWidth - mallowAppTrack.clientWidth;
-      const canMoveForward = delta > 0 && mallowAppTrack.scrollLeft < maxScroll - 2;
-      const canMoveBack = delta < 0 && mallowAppTrack.scrollLeft > 2;
-      if (!canMoveForward && !canMoveBack) return;
-      event.preventDefault();
-      if (Date.now() < wheelLockedUntil || Math.abs(delta) < 8) return;
-      wheelLockedUntil = Date.now() + 700;
-      goToAppScene(activeAppScene + (delta > 0 ? 1 : -1));
-    },
-    { passive: false },
-  );
-
-  mallowAppTrack.addEventListener("keydown", (event) => {
-    if (!appStoryActivated) return;
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      goToAppScene(activeAppScene + 1);
-    }
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      goToAppScene(activeAppScene - 1);
-    }
-  });
-
-  mallowAppTrack.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "touch" || event.target.closest("button, a")) return;
-    dragging = true;
-    dragStartX = event.clientX;
-    dragStartScroll = mallowAppTrack.scrollLeft;
-    mallowAppTrack.setPointerCapture(event.pointerId);
-  });
-
-  mallowAppTrack.addEventListener("pointermove", (event) => {
-    if (!dragging) return;
-    appStoryActivated = true;
-    mallowAppTrack.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
-  });
-
-  const finishAppDrag = (event) => {
-    if (!dragging) return;
-    dragging = false;
-    if (mallowAppTrack.hasPointerCapture(event.pointerId)) {
-      mallowAppTrack.releasePointerCapture(event.pointerId);
-    }
-    goToAppScene(Math.round(mallowAppTrack.scrollLeft / mallowAppTrack.clientWidth));
-  };
-
-  mallowAppTrack.addEventListener("pointerup", finishAppDrag);
-  mallowAppTrack.addEventListener("pointercancel", finishAppDrag);
-
-  window.addEventListener("resize", () => {
-    mallowAppTrack.scrollTo({ left: activeAppScene * mallowAppTrack.clientWidth, behavior: "auto" });
-  });
-}
-
 const rumiProject = document.querySelector("#rumi");
 const rumiOpening = document.querySelector(".rumi-opening");
-const rumiExpressionImage = document.querySelector("#rumiExpressionImage");
 const rumiExpressionName = document.querySelector("#rumiExpressionName");
 const rumiExpressionNumber = document.querySelector("#rumiExpressionNumber");
 const rumiExpressionDescription = document.querySelector("#rumiExpressionDescription");
-const rumiExpressionButtons = Array.from(document.querySelectorAll(".rumi-expression-controls button"));
-const rumiProductStory = document.querySelector("#rumiProductStory");
+const rumiExpressionButtons = Array.from(document.querySelectorAll(".rumi-expression-card"));
+const rumiProductButtons = Array.from(document.querySelectorAll(".rumi-product-tabs button"));
+const rumiProductPanels = Array.from(document.querySelectorAll(".rumi-product-panel"));
 const rumiPackaging = document.querySelector("#rumiPackaging");
 const rumiPackageStage = document.querySelector("#rumiPackageStage");
 const rumiPackageStatus = document.querySelector("#rumiPackageStatus");
@@ -395,26 +286,18 @@ if (rumiProject) {
   }
 
   rumiExpressionButtons.forEach((button) => {
-    const preload = new Image();
-    preload.src = button.dataset.src;
-
     button.addEventListener("click", () => {
-      if (button.getAttribute("aria-pressed") === "true" || !rumiExpressionImage) return;
+      rumiExpressionButtons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle("is-active", isActive);
+        item.setAttribute("aria-pressed", String(isActive));
+      });
 
-      rumiExpressionButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-      rumiExpressionImage.classList.add("is-switching");
-
-      window.setTimeout(
-        () => {
-          rumiExpressionImage.src = button.dataset.src;
-          rumiExpressionImage.alt = button.dataset.alt;
-          rumiExpressionName.textContent = button.dataset.name;
-          rumiExpressionDescription.textContent = button.dataset.description;
-          rumiExpressionNumber.textContent = String(Number(button.dataset.index) + 1).padStart(2, "0");
-          rumiExpressionImage.classList.remove("is-switching");
-        },
-        reduceMotion ? 0 : 170,
-      );
+      if (rumiExpressionName) rumiExpressionName.textContent = button.dataset.name;
+      if (rumiExpressionDescription) rumiExpressionDescription.textContent = button.dataset.description;
+      if (rumiExpressionNumber) {
+        rumiExpressionNumber.textContent = String(Number(button.dataset.index) + 1).padStart(2, "0");
+      }
     });
 
     button.addEventListener("keydown", (event) => {
@@ -428,6 +311,32 @@ if (rumiProject) {
     });
   });
 
+  rumiProductButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.rumiProduct;
+
+      rumiProductButtons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle("is-active", isActive);
+        item.setAttribute("aria-selected", String(isActive));
+      });
+
+      rumiProductPanels.forEach((panel) => {
+        panel.classList.toggle("is-active", panel.dataset.rumiPanel === target);
+      });
+    });
+
+    button.addEventListener("keydown", (event) => {
+      if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      event.preventDefault();
+      const currentIndex = rumiProductButtons.indexOf(button);
+      const direction = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1 : -1;
+      const nextIndex = (currentIndex + direction + rumiProductButtons.length) % rumiProductButtons.length;
+      rumiProductButtons[nextIndex].focus();
+      rumiProductButtons[nextIndex].click();
+    });
+  });
+
   let rumiFrame = 0;
   let rumiCutLength = 0;
   let rumiStatusIndex = -1;
@@ -437,20 +346,6 @@ if (rumiProject) {
   const updateRumiCutMetrics = () => {
     rumiIsMobile = window.matchMedia("(max-width: 767px)").matches;
     rumiCutLength = rumiCutPath?.getTotalLength() || 0;
-  };
-
-  const updateRumiProduct = () => {
-    if (!rumiProductStory) return;
-    const rect = rumiProductStory.getBoundingClientRect();
-    const travel = Math.max(1, rect.height - window.innerHeight);
-    const progress = rumiClamp(-rect.top / travel);
-    const front = 1 - rumiSmooth(0.16, 0.42, progress);
-    const turn = rumiSmooth(0.27, 0.58, progress);
-    const badge = rumiSmooth(0.62, 0.9, progress);
-
-    rumiProductStory.style.setProperty("--rumi-product-front", front.toFixed(4));
-    rumiProductStory.style.setProperty("--rumi-product-turn", turn.toFixed(4));
-    rumiProductStory.style.setProperty("--rumi-product-badge", badge.toFixed(4));
   };
 
   const setRumiPackageStatus = (index, label) => {
@@ -543,7 +438,6 @@ if (rumiProject) {
 
   const updateRumiStory = () => {
     rumiFrame = 0;
-    updateRumiProduct();
     updateRumiPackaging();
   };
 
