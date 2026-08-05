@@ -127,8 +127,9 @@ if (coverAboutSequence && coverAboutStage && aboutAnchor && folderTrigger) {
     coverAboutStage.style.setProperty("--cover-opacity", (1 - coverExit).toFixed(4));
     coverAboutStage.style.setProperty("--cover-y", `${(-46 * coverExit).toFixed(2)}px`);
     coverAboutStage.style.setProperty("--sheet-y", `${((1 - sheetRise) * 100).toFixed(3)}svh`);
-    coverAboutStage.style.setProperty("--folder-y", `${(122 * folderDrop).toFixed(2)}px`);
-    coverAboutStage.style.setProperty("--about-stage-y", `${(72 * sheetRise).toFixed(2)}px`);
+    const folderResponsiveDrop = 146 + Math.max(0, (window.innerHeight - 840) / 2 - 28);
+    coverAboutStage.style.setProperty("--folder-y", `${(folderResponsiveDrop * folderDrop).toFixed(2)}px`);
+    coverAboutStage.style.setProperty("--about-stage-y", `${(34 * sheetRise).toFixed(2)}px`);
     coverAboutStage.style.setProperty("--about-meta", metaReveal.toFixed(4));
     coverAboutStage.style.setProperty("--about-portrait", portraitReveal.toFixed(4));
     coverAboutStage.style.setProperty("--about-copy", copyReveal.toFixed(4));
