@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="AI Tools">
+  <defs>
+    <linearGradient id="bg" x1="10" y1="8" x2="86" y2="90" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#293563"/>
+      <stop offset="0.5" stop-color="#713f91"/>
+      <stop offset="1" stop-color="#d4678f"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="22" y1="18" x2="72" y2="76" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7bd"/>
+      <stop offset="1" stop-color="#8fe8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="22" fill="url(#bg)"/>
+  <path d="m29 18 3.8 11.2L44 33l-11.2 3.8L29 48l-3.8-11.2L14 33l11.2-3.8Z" fill="url(#spark)"/>
+  <path d="m69 54 2.6 7.4L79 64l-7.4 2.6L69 74l-2.6-7.4L59 64l7.4-2.6Z" fill="url(#spark)"/>
+  <text x="50" y="58" fill="#fff" font-family="Arial, sans-serif" font-size="31" font-weight="800" text-anchor="middle">AI</text>
+</svg>
