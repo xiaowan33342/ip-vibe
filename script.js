@@ -32,7 +32,6 @@ const projects = {
 };
 
 const notes = document.querySelectorAll(".project-note");
-const projectPeek = document.querySelector("#projectPeek");
 const desk = document.querySelector("#desk");
 
 function openProject(projectId) {
@@ -43,13 +42,6 @@ function openProject(projectId) {
     note.classList.toggle("active", note.dataset.project === projectId);
   });
 
-  if (projectPeek) {
-    projectPeek.classList.remove("is-changing");
-    void projectPeek.offsetWidth;
-    projectPeek.classList.add("is-changing");
-    projectPeek.setAttribute("href", project.href);
-    projectPeek.setAttribute("aria-label", `打开项目：${project.title}`);
-  }
 }
 
 notes.forEach((note) => {
@@ -248,6 +240,39 @@ characterLabels.forEach((label) => {
     label.click();
   });
 });
+
+const mallowSpecTag = document.querySelector(".mallow-spec-tag");
+const mallowSpecModal = document.querySelector("#mallowSpecModal");
+const mallowSpecClose = document.querySelector(".mallow-spec-modal-close");
+
+if (mallowSpecTag && mallowSpecModal && mallowSpecClose) {
+  const openMallowSpecModal = () => {
+    mallowSpecModal.hidden = false;
+    document.body.classList.add("modal-open");
+    mallowSpecClose.focus();
+  };
+
+  const closeMallowSpecModal = () => {
+    mallowSpecModal.hidden = true;
+    document.body.classList.remove("modal-open");
+    mallowSpecTag.focus();
+  };
+
+  mallowSpecTag.addEventListener("click", openMallowSpecModal);
+  mallowSpecClose.addEventListener("click", closeMallowSpecModal);
+
+  mallowSpecModal.addEventListener("click", (event) => {
+    if (event.target === mallowSpecModal) {
+      closeMallowSpecModal();
+    }
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !mallowSpecModal.hidden) {
+      closeMallowSpecModal();
+    }
+  });
+}
 
 const rumiProject = document.querySelector("#rumi");
 const rumiOpening = document.querySelector(".rumi-opening");
@@ -455,25 +480,117 @@ if (rumiProject) {
   });
 }
 
+const setupXigouTabs = (root) => {
+  if (!root || root.dataset.xigouTabsReady === "true") return;
+
+  const buttons = Array.from(root.querySelectorAll("[data-xigou-tab]"));
+  const panels = Array.from(root.querySelectorAll("[data-xigou-panel]"));
+  if (!buttons.length || !panels.length) return;
+
+  root.dataset.xigouTabsReady = "true";
+
+  const activateTab = (key, moveFocus = false) => {
+    buttons.forEach((button) => {
+      const isActive = button.dataset.xigouTab === key;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
+      button.tabIndex = isActive ? 0 : -1;
+      if (isActive && moveFocus) button.focus();
+    });
+
+    panels.forEach((panel) => {
+      const isActive = panel.dataset.xigouPanel === key;
+      panel.classList.toggle("is-active", isActive);
+      panel.setAttribute("aria-hidden", String(!isActive));
+    });
+  };
+
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => activateTab(button.dataset.xigouTab));
+    button.addEventListener("keydown", (event) => {
+      let nextIndex = null;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % buttons.length;
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + buttons.length) % buttons.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = buttons.length - 1;
+      if (nextIndex === null) return;
+      event.preventDefault();
+      activateTab(buttons[nextIndex].dataset.xigouTab, true);
+    });
+  });
+
+  activateTab(root.dataset.defaultTab || buttons[0].dataset.xigouTab);
+};
+
+document.querySelectorAll("[data-xigou-tabs]").forEach(setupXigouTabs);
+
+const xigouRevealItems = Array.from(document.querySelectorAll(".xigou-reveal"));
+if (xigouRevealItems.length) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    xigouRevealItems.forEach((item) => item.classList.add("is-visible"));
+  } else {
+    const xigouRevealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          xigouRevealObserver.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -12%", threshold: 0.12 },
+    );
+    xigouRevealItems.forEach((item) => xigouRevealObserver.observe(item));
+  }
+}
+
 const lightbox = document.querySelector("#lightbox");
 const lightboxImage = document.querySelector("#lightboxImage");
 const lightboxCaption = document.querySelector("#lightboxCaption");
 const lightboxClose = document.querySelector(".lightbox-close");
+let lastLightboxTrigger = null;
+
+const openLightbox = (image, trigger) => {
+  lastLightboxTrigger = trigger;
+  lightboxImage.src = image.currentSrc || image.src;
+  lightboxImage.alt = image.alt;
+  lightboxCaption.textContent = image.alt;
+  lightbox.hidden = false;
+  document.body.style.overflow = "hidden";
+  lightboxClose.focus();
+};
 
 document.querySelectorAll(".previewable").forEach((image) => {
-  image.addEventListener("click", () => {
-    lightboxImage.src = image.src;
-    lightboxImage.alt = image.alt;
-    lightboxCaption.textContent = image.alt;
-    lightbox.hidden = false;
-    document.body.style.overflow = "hidden";
-  });
+  const trigger = image.closest(".xigou-preview-trigger") || image;
+  if (trigger.dataset.previewReady === "true") return;
+  trigger.dataset.previewReady = "true";
+
+  if (trigger === image) {
+    trigger.tabIndex = 0;
+    trigger.setAttribute("role", "button");
+    trigger.setAttribute("aria-label", `放大查看${image.alt}`);
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openLightbox(image, trigger);
+    });
+  }
+
+  trigger.addEventListener("click", () => openLightbox(image, trigger));
 });
+
+const rumiSpecDetail = document.querySelector(".rumi-spec-detail");
+const rumiSpecImage = document.querySelector('[data-rumi-panel="spec"] .previewable');
+
+if (rumiSpecDetail && rumiSpecImage) {
+  rumiSpecDetail.addEventListener("click", () => rumiSpecImage.click());
+}
 
 function closeLightbox() {
   lightbox.hidden = true;
   lightboxImage.removeAttribute("src");
   document.body.style.overflow = "";
+  lastLightboxTrigger?.focus();
+  lastLightboxTrigger = null;
 }
 
 lightboxClose.addEventListener("click", closeLightbox);

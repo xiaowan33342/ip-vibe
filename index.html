@@ -45,10 +45,12 @@
                 </div>
 
                 <div class="portfolio-sticker" id="portfolioTitle" aria-label="Portfolio">
-                  <div class="portfolio-title-group">
-                    <span class="title-shadow" aria-hidden="true">Portfolio</span>
-                    <span class="title-paper" aria-hidden="true">Portfolio</span>
-                    <h1 class="title-front">Portfolio</h1>
+                  <div class="portfolio-title-motion">
+                    <div class="portfolio-title-group">
+                      <span class="title-shadow" aria-hidden="true">Portfolio</span>
+                      <span class="title-paper" aria-hidden="true">Portfolio</span>
+                      <h1 class="title-front">Portfolio</h1>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -186,34 +188,27 @@
         </div>
 
         <div class="desk" id="desk">
-          <button class="project-note note-mallow active" type="button" data-project="mallow">
-            <span>小屋来信</span>
-            <strong>麦洛小屋</strong>
-            <img src="./assets/mallow-cover.png" alt="" />
+          <button class="project-note note-mallow active" type="button" data-project="mallow" aria-label="打开项目：麦洛小屋 Mallow Nook">
+            <img class="index-sticker-image" src="./assets/images/index-stickers/sticker-mallow-nook.png" alt="" />
           </button>
 
-          <button class="project-note note-rumi" type="button" data-project="rumi">
-            <span>盲盒吊牌</span>
-            <strong>Rumi</strong>
-            <img src="./assets/rumi-intro.png" alt="" />
+          <button class="project-note note-rumi" type="button" data-project="rumi" aria-label="打开项目：@Rumi 绒米">
+            <img class="index-sticker-image" src="./assets/images/index-stickers/sticker-rumi.png" alt="" />
           </button>
 
-          <button class="project-note note-amb" type="button" data-project="ambagel">
-            <span>早安收据</span>
-            <strong>AMBagel</strong>
-            <img src="./assets/amb-intro.png" alt="" />
+          <button class="project-note note-amb" type="button" data-project="ambagel" aria-label="打开项目：AMBagel 贝果">
+            <img class="index-sticker-image" src="./assets/images/index-stickers/sticker-am-bagel.png" alt="" />
           </button>
 
-          <button class="project-note note-xigou" type="button" data-project="xigou">
-            <span>藏品标签</span>
-            <strong>白衣红陶细狗</strong>
-            <img src="./assets/xigou-cover.png" alt="" />
+          <button class="project-note note-xigou" type="button" data-project="xigou" aria-label="打开项目：白衣红陶细狗文创">
+            <img class="index-sticker-image" src="./assets/images/index-stickers/sticker-greyhound.png" alt="" />
           </button>
 
-          <button class="project-note note-qingliang" type="button" data-project="qingliang">
-            <span>山形信笺</span>
-            <strong>一念清凉</strong>
-            <img src="./assets/qingliang-main.png" alt="" />
+          <button class="project-note note-qingliang" type="button" data-project="qingliang" aria-label="打开项目：一念清凉五台山文创">
+            <span class="qingliang-sticker-combo" aria-hidden="true">
+              <img class="qingliang-sticker-bag" src="./assets/images/index-stickers/sticker-yinian-qingliang-bag.png" alt="" />
+              <img class="qingliang-sticker-label" src="./assets/images/index-stickers/sticker-yinian-qingliang-label.png" alt="" />
+            </span>
           </button>
 
           <div class="mini-ip-strip" aria-label="其他小 IP 头像区域">
@@ -226,9 +221,6 @@
             <span aria-hidden="true"></span>
           </div>
 
-          <a class="project-peek" href="#mallow" id="projectPeek" aria-live="polite" aria-label="打开项目：麦洛小屋 Mallow Nook">
-            <em>打开项目</em><span aria-hidden="true">↗</span>
-          </a>
         </div>
       </section>
 
@@ -331,23 +323,34 @@
             alt="Mallow Nook Sweet Picnic Club 2026 Summer 周边产品展示图"
           />
 
-          <a class="mallow-spec-tag" href="#mallow-product-specs" aria-label="查看 Mallow Nook 产品规格">
-            <span class="mallow-spec-string" aria-hidden="true"></span>
-            <span class="mallow-spec-ring" aria-hidden="true"></span>
-            <span class="mallow-spec-card">
-              <span>产品规格</span>
-              <small>Product Specs</small>
+          <button class="mallow-spec-tag" type="button" aria-haspopup="dialog" aria-controls="mallowSpecModal" aria-label="查看 Mallow Nook 产品规格">
+            <span class="mallow-spec-tag-motion">
+              <span class="mallow-spec-string" aria-hidden="true"></span>
+              <span class="mallow-spec-ring" aria-hidden="true"></span>
+
+              <span class="mallow-spec-card">
+                <span class="mallow-spec-preview">
+                  <img src="./assets/mallow-product-specs.png" alt="" />
+                </span>
+                <span class="mallow-spec-copy">
+                  <strong>产品规格</strong>
+                  <small>点开查看</small>
+                </span>
+              </span>
             </span>
-          </a>
+          </button>
         </section>
 
-        <section class="mallow-product-specs" id="mallow-product-specs" aria-label="Mallow Nook 产品规格">
-          <img
-            class="mallow-product-specs-image"
-            src="./assets/mallow-product-specs.png"
-            alt="Mallow Nook 伙伴系列大头亚克力钥匙扣产品规格"
-          />
-        </section>
+        <div class="mallow-spec-modal" id="mallowSpecModal" hidden role="dialog" aria-modal="true" aria-label="Mallow Nook 产品规格">
+          <button class="mallow-spec-modal-close" type="button" aria-label="关闭产品规格">×</button>
+          <div class="mallow-spec-modal-sheet">
+            <img
+              class="mallow-spec-modal-image"
+              src="./assets/mallow-product-specs.png"
+              alt="Mallow Nook 伙伴系列大头亚克力钥匙扣产品规格"
+            />
+          </div>
+        </div>
       </section>
 
       <section class="project section project-rumi rumi-project" id="rumi" aria-labelledby="rumiTitle">
@@ -363,8 +366,7 @@
 
             <header class="rumi-opening-copy">
               <p class="rumi-eyebrow">01 / CHARACTER IP · 2025</p>
-              <img class="rumi-opening-logo" src="./assets/rumi/logo.png" alt="Rumi logo" />
-              <h2 id="rumiTitle">@Rumi</h2>
+              <h2 id="rumiTitle"><span>@</span>Rumi</h2>
               <p class="rumi-chinese-name">绒米</p>
               <p class="rumi-project-type">角色 IP 与盲盒产品概念</p>
               <p class="rumi-core-line">把说不出口的心事，轻轻系成一个蝴蝶结。</p>
@@ -422,13 +424,19 @@
             <h4 id="rumiMiniMomentsTitle">Rumi's Tiny Daily Moments / 绒米的小小日常</h4>
             <div class="rumi-mini-grid">
               <figure class="rumi-mini-card writing">
-                <img src="./assets/rumi/mini-writing.png" alt="绒米写字的小动作" width="336" height="329" loading="lazy" />
+                <span class="rumi-daily-character rumi-daily-character--left">
+                  <img src="./assets/rumi/mini-writing.png" alt="绒米写字的小动作" width="336" height="329" loading="lazy" />
+                </span>
               </figure>
               <figure class="rumi-mini-card gift">
-                <img src="./assets/rumi/mini-gift.png" alt="绒米递出礼物的小动作" width="330" height="364" loading="lazy" />
+                <span class="rumi-daily-character rumi-daily-character--middle">
+                  <img src="./assets/rumi/mini-gift.png" alt="绒米递出礼物的小动作" width="330" height="364" loading="lazy" />
+                </span>
               </figure>
               <figure class="rumi-mini-card hugging">
-                <img src="./assets/rumi/mini-hugging.png" alt="绒米抱紧物品的小动作" width="317" height="324" loading="lazy" />
+                <span class="rumi-daily-character rumi-daily-character--right">
+                  <img src="./assets/rumi/mini-hugging.png" alt="绒米抱紧物品的小动作" width="317" height="324" loading="lazy" />
+                </span>
               </figure>
             </div>
           </section>
@@ -454,17 +462,20 @@
             </div>
 
             <div class="rumi-product-panel" role="tabpanel" data-rumi-panel="character">
-              <img src="./assets/rumi/illustration-front.png" alt="绒米正面角色立绘" loading="lazy" />
-              <img src="./assets/rumi/illustration-side.png" alt="绒米侧面角色立绘" loading="lazy" />
+              <img class="rumi-character-front" src="./assets/rumi/illustration-front.png" alt="绒米正面角色立绘" loading="lazy" />
+              <img class="rumi-character-side" src="./assets/rumi/illustration-side.png" alt="绒米侧面角色立绘" loading="lazy" />
             </div>
 
             <div class="rumi-product-panel" role="tabpanel" data-rumi-panel="badge">
-              <img src="./assets/rumi/badge-front.png" alt="绒米徽章正面" loading="lazy" />
-              <img src="./assets/rumi/badge-back.png" alt="绒米徽章背面" loading="lazy" />
+              <img class="rumi-badge-front" src="./assets/rumi/badge-front.png" alt="绒米徽章正面" loading="lazy" />
+              <img class="rumi-badge-back" src="./assets/rumi/badge-back.png" alt="绒米徽章背面" loading="lazy" />
             </div>
 
             <div class="rumi-product-panel" role="tabpanel" data-rumi-panel="spec">
-              <img src="./assets/rumi/badge-specification.jpg" alt="绒米徽章产品规格" loading="lazy" />
+              <div class="rumi-spec-preview">
+                <img class="previewable" src="./assets/rumi/badge-specification.jpg" alt="绒米徽章产品规格" loading="lazy" />
+                <button class="rumi-spec-detail" type="button">查看详情</button>
+              </div>
             </div>
           </div>
         </section>
@@ -578,29 +589,169 @@
         </div>
       </section>
 
-      <section class="project section project-xigou" id="xigou">
-        <div class="project-hero reverse">
-          <div>
-            <p class="project-tag">2026.05 / 文物形象转译与文创产品</p>
-            <h2>白衣红陶细狗</h2>
-            <p>从文物造型特征出发，提炼为更亲近日常的书签与中性笔文创产品。</p>
-            <div class="project-pills">
-              <span>文物转译</span><span>PVC 书签</span><span>中性笔</span><span>日常用品</span>
+      <section class="project project-xigou xigou-project" id="xigou" aria-labelledby="xigouTitle">
+        <section class="xigou-section xigou-intro" id="xigou-intro" aria-labelledby="xigouTitle">
+          <div class="xigou-container">
+            <div class="xigou-intro-grid">
+              <header class="xigou-intro-copy xigou-reveal">
+                <p class="xigou-kicker">CULTURAL PRODUCT DESIGN</p>
+                <h2 id="xigouTitle">白衣红陶细狗</h2>
+                <p class="xigou-subtitle">从文物姿态到日常陪伴</p>
+                <p class="xigou-description">以唐代白衣红陶细狗为原型，提取其修长颈部、伏卧姿态与垂耳特征，通过轮廓简化和比例重构，将静置于展柜中的文物形象转化为能够被阅读、书写与陪伴的日常物件。</p>
+                <ul class="xigou-tags" aria-label="项目关键词">
+                  <li>文物转译</li>
+                  <li>产品设计</li>
+                  <li>文创设计</li>
+                </ul>
+              </header>
+
+              <div class="xigou-origin-comparison" aria-label="文物原型与简化造型对照">
+                <figure class="xigou-origin-card xigou-reveal">
+                  <img src="./assets/xigou/xigou-origin.jpg" alt="白衣红陶细狗文物原型" width="1206" height="917" decoding="async" />
+                  <figcaption><span>01</span> 文物原型</figcaption>
+                </figure>
+                <figure class="xigou-simplified-card xigou-reveal">
+                  <img src="./assets/xigou/xigou-simplified-part.png" alt="白衣红陶细狗简化造型" width="1254" height="1254" decoding="async" />
+                  <figcaption><span>02</span> 造型简化</figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <div class="xigou-process-block">
+              <header class="xigou-process-copy xigou-reveal">
+                <div>
+                  <p class="xigou-kicker">FROM OBJECT TO FORM</p>
+                  <h3>从文物轮廓到产品语言</h3>
+                </div>
+                <p>保留细狗最具识别度的修长比例与伏卧姿态，在减少陶塑细节的同时，使造型能够适应书签与中性笔的结构和使用方式。</p>
+              </header>
+              <button class="xigou-preview-trigger xigou-process-visual xigou-reveal" type="button" aria-label="放大查看白衣红陶细狗轮廓转译过程">
+                <img class="previewable" src="./assets/xigou/xigou-outline-process.png" alt="白衣红陶细狗轮廓转译过程" width="1448" height="1086" loading="lazy" decoding="async" />
+              </button>
             </div>
           </div>
-          <img class="previewable" src="./assets/xigou-cover.png" alt="白衣红陶细狗作品集封面" />
-        </div>
+        </section>
 
-        <div class="media-band two">
-          <img class="previewable" src="./assets/xigou-bookmark.png" alt="白衣红陶细狗 PVC 趴页书签" />
-          <img class="previewable" src="./assets/xigou-pen.png" alt="白衣红陶细狗中性笔方案" />
-        </div>
+        <section class="xigou-section xigou-bookmark" id="xigou-bookmark" aria-labelledby="xigouBookmarkTitle">
+          <div class="xigou-container xigou-bookmark-layout" data-xigou-tabs data-default-tab="front">
+            <header class="xigou-bookmark-copy xigou-reveal">
+              <p class="xigou-kicker">BOOKMARK DESIGN</p>
+              <h3 id="xigouBookmarkTitle">让伏卧的细狗，<br />停在读到的这一页</h3>
+              <p>将陶狗的伏卧姿态转化为趴在书页边缘的使用动作，使书签不只是印有文物图案，而是在使用过程中重新呈现文物原有的姿态与陪伴感。</p>
 
-        <div class="collab-note">
-          <p class="project-tag">Bonus Concept / Separate Crossover</p>
-          <h3>早安细狗贝果企划</h3>
-          <p>AMBagel 展示品牌搭建，细狗展示文物转译；联名只作为额外支线，不合并两个项目。</p>
-        </div>
+              <div class="xigou-tab-list" role="tablist" aria-label="切换细狗书签使用状态">
+                <button id="xigouBookmarkFrontTab" class="is-active" type="button" role="tab" aria-selected="true" aria-controls="xigouBookmarkFrontPanel" tabindex="0" data-xigou-tab="front">使用正面</button>
+                <button id="xigouBookmarkBackTab" type="button" role="tab" aria-selected="false" aria-controls="xigouBookmarkBackPanel" tabindex="-1" data-xigou-tab="back">使用背面</button>
+              </div>
+
+              <ul class="xigou-spec-list" aria-label="书签产品参数">
+                <li>0.4 mm 磨砂 PVC</li>
+                <li>双面印刷</li>
+                <li>圆角模切</li>
+                <li>弹性趴页结构</li>
+              </ul>
+              <p class="xigou-emotion-line">让它安静地守住你读到的地方。</p>
+            </header>
+
+            <div class="xigou-bookmark-stage xigou-reveal" aria-live="polite">
+              <figure id="xigouBookmarkFrontPanel" class="xigou-tab-panel is-active" role="tabpanel" aria-labelledby="xigouBookmarkFrontTab" aria-hidden="false" data-xigou-panel="front">
+                <img src="./assets/xigou/xigou-bookmark-on-book-front.png" alt="细狗书签夹页正面效果" width="1254" height="1254" loading="lazy" decoding="async" />
+              </figure>
+              <figure id="xigouBookmarkBackPanel" class="xigou-tab-panel" role="tabpanel" aria-labelledby="xigouBookmarkBackTab" aria-hidden="true" data-xigou-panel="back">
+                <img src="./assets/xigou/xigou-bookmark-on-book-back.png" alt="细狗书签夹页背面效果" width="1254" height="1254" loading="lazy" decoding="async" />
+              </figure>
+            </div>
+
+            <div class="xigou-bookmark-packaging xigou-reveal">
+              <p class="xigou-packaging-label">PACKAGING / 包装展示</p>
+              <div class="xigou-package-grid">
+                <figure>
+                  <button class="xigou-preview-trigger" type="button" aria-label="放大查看细狗书签包装正面">
+                    <img class="previewable" src="./assets/xigou/xigou-bookmark-pack-front.png" alt="细狗书签包装正面" width="875" height="1798" loading="lazy" decoding="async" />
+                  </button>
+                  <figcaption>包装正面</figcaption>
+                </figure>
+                <figure>
+                  <button class="xigou-preview-trigger" type="button" aria-label="放大查看细狗书签包装背面">
+                    <img class="previewable" src="./assets/xigou/xigou-bookmark-pack-back.png" alt="细狗书签包装背面" width="872" height="1802" loading="lazy" decoding="async" />
+                  </button>
+                  <figcaption>包装背面</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="xigou-section xigou-pen" id="xigou-pen" aria-labelledby="xigouPenTitle">
+          <div class="xigou-container">
+            <header class="xigou-pen-heading xigou-reveal">
+              <p class="xigou-kicker">PEN DESIGN</p>
+              <h3 id="xigouPenTitle">两种结构，延续同一条修长轮廓</h3>
+              <p>将细狗修长的颈部比例转化为笔身结构，狗头既是产品的识别特征，也成为按压或拔帽动作中的结构节点，使文物形态自然进入书写工具。</p>
+            </header>
+
+            <div class="xigou-pen-layout" data-xigou-tabs data-default-tab="press">
+              <div class="xigou-pen-stage xigou-reveal" aria-live="polite">
+                <figure class="xigou-tab-panel is-active" aria-hidden="false" data-xigou-panel="press">
+                  <img src="./assets/xigou/xigou-pen-press-threeviews-transparent.png" alt="按压式细狗中性笔三视图" width="6872" height="5619" loading="lazy" decoding="async" />
+                </figure>
+                <figure class="xigou-tab-panel" aria-hidden="true" data-xigou-panel="cap">
+                  <img src="./assets/xigou/xigou-pen-cap-threeviews-transparent.png" alt="拔帽式细狗中性笔三视图" width="6845" height="5587" loading="lazy" decoding="async" />
+                </figure>
+              </div>
+
+              <aside class="xigou-pen-copy xigou-reveal">
+                <div class="xigou-tab-list xigou-pen-tabs" role="tablist" aria-label="切换细狗中性笔结构">
+                  <button id="xigouPenPressTab" class="is-active" type="button" role="tab" aria-selected="true" tabindex="0" data-xigou-tab="press">按压式</button>
+                  <button id="xigouPenCapTab" type="button" role="tab" aria-selected="false" tabindex="-1" data-xigou-tab="cap">拔帽式</button>
+                </div>
+
+                <article class="xigou-pen-detail xigou-tab-panel is-active" aria-hidden="false" aria-labelledby="xigouPenPressTab" data-xigou-panel="press">
+                  <div>
+                    <p class="xigou-detail-index">PRESS TYPE / 01</p>
+                    <h4>按压式中性笔</h4>
+                    <p>以顶部按键完成出芯与收芯，保持笔身连续、修长的整体轮廓。</p>
+                    <ul class="xigou-parameter-list">
+                      <li><span>笔芯</span>0.5 mm 黑色中性笔芯</li>
+                      <li><span>材质</span>磨砂 ABS</li>
+                      <li><span>颜色</span>奶油白</li>
+                      <li><span>结构</span>按压出芯结构</li>
+                    </ul>
+                  </div>
+                  <button class="xigou-preview-trigger xigou-pen-package" type="button" aria-label="放大查看按压式细狗中性笔包装">
+                    <img class="previewable" src="./assets/xigou/xigou-pen-press-pack.png" alt="按压式细狗中性笔包装" width="895" height="1758" loading="lazy" decoding="async" />
+                  </button>
+                </article>
+
+                <article class="xigou-pen-detail xigou-tab-panel" aria-hidden="true" aria-labelledby="xigouPenCapTab" data-xigou-panel="cap">
+                  <div>
+                    <p class="xigou-detail-index">CAP TYPE / 02</p>
+                    <h4>拔帽式中性笔</h4>
+                    <p>将狗头部分转化为独立笔帽，在开合动作中强化产品形象与使用记忆。</p>
+                    <ul class="xigou-parameter-list">
+                      <li><span>笔芯</span>0.5 mm 黑色中性笔芯</li>
+                      <li><span>材质</span>磨砂 ABS</li>
+                      <li><span>颜色</span>奶油白</li>
+                      <li><span>结构</span>拔帽使用结构</li>
+                    </ul>
+                  </div>
+                  <button class="xigou-preview-trigger xigou-pen-package" type="button" aria-label="放大查看拔帽式细狗中性笔包装">
+                    <img class="previewable" src="./assets/xigou/xigou-pen-cap-pack.png" alt="拔帽式细狗中性笔包装" width="895" height="1758" loading="lazy" decoding="async" />
+                  </button>
+                </article>
+              </aside>
+            </div>
+
+            <footer class="xigou-summary xigou-reveal">
+              <p>不是复制文物的表面，而是将它的姿态、比例与情绪，转化为能够被阅读、书写与陪伴的日常物件。</p>
+              <ol aria-label="细狗文创设计流程">
+                <li>文物观察</li>
+                <li>形态转译</li>
+                <li>日常使用</li>
+              </ol>
+            </footer>
+          </div>
+        </section>
       </section>
 
       <section class="project section project-qingliang" id="qingliang">
