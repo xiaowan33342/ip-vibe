@@ -863,3 +863,32 @@ portfolioBackToTop?.addEventListener("click", () => {
     block: "start",
   });
 });
+
+const categoryDividers = Array.from(document.querySelectorAll(".category-divider"));
+
+if (categoryDividers.length) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    categoryDividers.forEach((divider) => divider.classList.add("is-visible"));
+  }
+
+  if ("IntersectionObserver" in window) {
+    const visibleCategoryDividers = new Set();
+    const categoryDividerObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleCategoryDividers.add(entry.target);
+            entry.target.classList.add("is-visible");
+          } else {
+            visibleCategoryDividers.delete(entry.target);
+          }
+        });
+
+        document.body.classList.toggle("category-divider-active", visibleCategoryDividers.size > 0);
+      },
+      { rootMargin: "0px 0px -8%", threshold: 0.18 },
+    );
+
+    categoryDividers.forEach((divider) => categoryDividerObserver.observe(divider));
+  }
+}
