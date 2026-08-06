@@ -109,7 +109,7 @@ if (coverAboutSequence && coverAboutStage && aboutAnchor && folderTrigger) {
     const progress = clamp(-sequenceRect.top / maxTravel);
 
     const coverExit = reduceMotion ? Number(progress >= 0.18) : smoothStep(0.04, 0.27, progress);
-    const sheetRise = reduceMotion ? Number(progress >= 0.3) : smoothStep(0.14, 0.58, progress);
+    const sheetRise = smoothStep(0.14, 0.58, progress);
     const folderDrop = reduceMotion ? Number(progress >= 0.48) : smoothStep(0.54, 0.7, progress);
     const metaReveal = reduceMotion ? Number(progress >= 0.34) : smoothStep(0.46, 0.58, progress);
     const portraitReveal = reduceMotion ? Number(progress >= 0.38) : smoothStep(0.49, 0.66, progress);
@@ -175,7 +175,7 @@ if (mallowHero && mallowIntro) {
   };
 
   const playMallowIntro = () => {
-    if (reduceMotion || introSeen) {
+    if (introSeen) {
       finishMallowIntro();
       return;
     }
@@ -602,4 +602,264 @@ document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   closeCharacterLabels();
   if (!lightbox.hidden) closeLightbox();
+});
+
+const ambProject = document.querySelector("#ambagel");
+
+if (ambProject) {
+  const ambLogoVariants = {
+    logotype: {
+      src: "./assets/ambagel/ambagel_logotype.png",
+      alt: "AMBagel Logotype 字标",
+    },
+    brandmark: {
+      src: "./assets/ambagel/ambagel_brandmark.png",
+      alt: "AMBagel Brandmark 品牌图形",
+    },
+    monochrome: {
+      src: "./assets/ambagel/ambagel_monochrome_logo.png",
+      alt: "AMBagel Monochrome 单色 Logo",
+    },
+  };
+
+  const ambApplicationStates = {
+    packaging: {
+      src: "./assets/ambagel/aw-bagel-packaging-collection.png",
+      alt: "AMBagel 包装系统组合展示",
+      title: "包装系统",
+      description: "品牌视觉在包装组合中的统一延展。",
+    },
+    retail: {
+      src: "./assets/ambagel/aw-bagel-storefront-logo-mockup.png",
+      alt: "AMBagel 门店与招牌 Logo 应用场景",
+      title: "门店体验",
+      description: "品牌识别在门店与真实消费场景中的呈现。",
+    },
+    touchpoints: {
+      src: "./assets/ambagel/an-bagel-business-card-mockup.png",
+      alt: "AMBagel 品牌名片应用",
+      title: "品牌触点",
+      description: "将统一的视觉识别延展到名片等日常接触物料中，保持品牌体验的一致与完整。",
+    },
+  };
+
+  const ambIntro = ambProject.querySelector(".amb-intro");
+  if (ambIntro) {
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      ambIntro.classList.add("is-visible");
+    } else {
+      const ambIntroObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            ambIntroObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.16 },
+      );
+      ambIntroObserver.observe(ambIntro);
+    }
+  }
+
+  const ambLogoStage = ambProject.querySelector("#ambLogoStage");
+  const ambLogoImage = ambProject.querySelector("#ambLogoImage");
+  const ambLogoButtons = Array.from(ambProject.querySelectorAll("[data-amb-logo]"));
+  let ambLogoTimer = 0;
+
+  const updateAmbLogo = (key) => {
+    const variant = ambLogoVariants[key];
+    if (!variant || !ambLogoStage || !ambLogoImage) return;
+
+    ambLogoButtons.forEach((button) => {
+      const isActive = button.dataset.ambLogo === key;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    window.clearTimeout(ambLogoTimer);
+    if (reduceMotion) {
+      ambLogoImage.src = variant.src;
+      ambLogoImage.alt = variant.alt;
+      return;
+    }
+
+    ambLogoStage.classList.add("is-changing");
+    ambLogoTimer = window.setTimeout(() => {
+      ambLogoImage.src = variant.src;
+      ambLogoImage.alt = variant.alt;
+      window.requestAnimationFrame(() => ambLogoStage.classList.remove("is-changing"));
+    }, 170);
+  };
+
+  ambLogoButtons.forEach((button) => {
+    button.addEventListener("click", () => updateAmbLogo(button.dataset.ambLogo));
+  });
+
+  const ambColorList = ambProject.querySelector(".amb-color-list");
+  const ambColorButtons = Array.from(ambProject.querySelectorAll("[data-amb-color]"));
+  let ambSelectedColor = "#FBF6EB";
+  let ambSelectedColorIsDark = false;
+
+  const applyAmbLogoBackground = (color, isDark) => {
+    if (!ambLogoStage) return;
+    ambLogoStage.style.backgroundColor = color;
+    ambLogoStage.classList.toggle("is-dark", isDark);
+  };
+
+  const restoreAmbLogoBackground = () => {
+    applyAmbLogoBackground(ambSelectedColor, ambSelectedColorIsDark);
+  };
+
+  ambColorButtons.forEach((button) => {
+    const previewColor = () => applyAmbLogoBackground(button.dataset.ambColor, button.dataset.ambDark === "true");
+    button.addEventListener("pointerenter", previewColor);
+    button.addEventListener("focus", previewColor);
+    button.addEventListener("blur", restoreAmbLogoBackground);
+    button.addEventListener("click", () => {
+      ambSelectedColor = button.dataset.ambColor;
+      ambSelectedColorIsDark = button.dataset.ambDark === "true";
+      ambColorButtons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle("is-active", isActive);
+        item.setAttribute("aria-pressed", String(isActive));
+      });
+      restoreAmbLogoBackground();
+    });
+  });
+  ambColorList?.addEventListener("pointerleave", restoreAmbLogoBackground);
+
+  const ambApplicationStage = ambProject.querySelector("#ambApplicationStage");
+  const ambApplicationImage = ambProject.querySelector("#ambApplicationImage");
+  const ambApplicationName = ambProject.querySelector("#ambApplicationName");
+  const ambApplicationDescription = ambProject.querySelector("#ambApplicationDescription");
+  const ambApplicationSummary = ambProject.querySelector(".amb-application-summary");
+  const ambApplicationButtons = Array.from(ambProject.querySelectorAll("[data-amb-application]"));
+  let ambApplicationTimer = 0;
+
+  const updateAmbApplication = (key) => {
+    const state = ambApplicationStates[key];
+    if (!state || !ambApplicationStage || !ambApplicationImage || !ambApplicationName || !ambApplicationDescription) return;
+
+    ambApplicationButtons.forEach((button) => {
+      const isActive = button.dataset.ambApplication === key;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    const applyState = () => {
+      ambApplicationStage.dataset.mode = key;
+      ambApplicationImage.src = state.src;
+      ambApplicationImage.alt = state.alt;
+      ambApplicationName.textContent = state.title;
+      ambApplicationDescription.textContent = state.description;
+    };
+
+    window.clearTimeout(ambApplicationTimer);
+    if (reduceMotion) {
+      applyState();
+      return;
+    }
+
+    ambApplicationStage.classList.add("is-changing");
+    ambApplicationSummary?.classList.add("is-changing");
+    ambApplicationTimer = window.setTimeout(() => {
+      applyState();
+      window.requestAnimationFrame(() => {
+        ambApplicationStage.classList.remove("is-changing");
+        ambApplicationSummary?.classList.remove("is-changing");
+      });
+    }, 170);
+  };
+
+  ambApplicationButtons.forEach((button) => {
+    button.addEventListener("click", () => updateAmbApplication(button.dataset.ambApplication));
+  });
+
+  const ambSectionNav = ambProject.querySelector(".amb-section-nav");
+  const ambSectionLinks = Array.from(ambProject.querySelectorAll("[data-amb-section-link]"));
+  const ambSections = ambSectionLinks
+    .map((link) => document.getElementById(link.dataset.ambSectionLink))
+    .filter(Boolean);
+
+  ambSectionLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const target = document.getElementById(link.dataset.ambSectionLink);
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    });
+  });
+
+  if (ambSectionNav && "IntersectionObserver" in window) {
+    const ambProjectObserver = new IntersectionObserver(
+      ([entry]) => {
+        ambSectionNav.classList.toggle("is-visible", entry.isIntersecting);
+        document.body.classList.toggle("amb-project-active", entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: "-72px 0px -8%" },
+    );
+    ambProjectObserver.observe(ambProject);
+
+    const ambSectionObserver = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visibleEntry) return;
+        ambSectionLinks.forEach((link) => {
+          link.classList.toggle("is-active", link.dataset.ambSectionLink === visibleEntry.target.id);
+        });
+      },
+      { threshold: [0.2, 0.45, 0.7], rootMargin: "-18% 0px -48%" },
+    );
+    ambSections.forEach((section) => ambSectionObserver.observe(section));
+  }
+}
+
+const qingliangRevealItems = Array.from(document.querySelectorAll(".qingliang-reveal"));
+
+if (qingliangRevealItems.length) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    qingliangRevealItems.forEach((item) => item.classList.add("is-visible"));
+  } else {
+    const qingliangRevealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          qingliangRevealObserver.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -10%", threshold: 0.12 },
+    );
+
+    qingliangRevealItems.forEach((item) => qingliangRevealObserver.observe(item));
+  }
+}
+
+const portfolioEnd = document.querySelector("#portfolio-end");
+const portfolioBackToTop = document.querySelector("#portfolioBackToTop");
+
+if (portfolioEnd) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    portfolioEnd.classList.add("is-visible");
+  } else {
+    const portfolioEndObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        portfolioEnd.classList.add("is-visible");
+        portfolioEndObserver.unobserve(portfolioEnd);
+      },
+      { threshold: 0.28 },
+    );
+    portfolioEndObserver.observe(portfolioEnd);
+  }
+}
+
+portfolioBackToTop?.addEventListener("click", () => {
+  document.querySelector("#cover")?.scrollIntoView({
+    behavior: reduceMotion ? "auto" : "smooth",
+    block: "start",
+  });
 });
