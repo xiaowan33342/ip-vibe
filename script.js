@@ -93,6 +93,7 @@ const coverAboutSequence = document.querySelector(".cover-about-sequence");
 const coverAboutStage = document.querySelector("#coverAboutStage");
 const aboutAnchor = document.querySelector("#about");
 const folderTrigger = document.querySelector("#folderTrigger");
+const portfolioTitle = document.querySelector("#portfolioTitle");
 
 if (coverAboutSequence && coverAboutStage && aboutAnchor && folderTrigger) {
   let sequenceFrame = 0;
@@ -144,6 +145,10 @@ if (coverAboutSequence && coverAboutStage && aboutAnchor && folderTrigger) {
   };
 
   folderTrigger.addEventListener("click", openAboutSheet);
+  portfolioTitle?.addEventListener("click", () => {
+    if (coverAboutStage.classList.contains("about-is-open")) return;
+    openAboutSheet();
+  });
   folderTrigger.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
@@ -891,4 +896,275 @@ if (categoryDividers.length) {
 
     categoryDividers.forEach((divider) => categoryDividerObserver.observe(divider));
   }
+}
+
+const writingWorks = {
+  buddhism: {
+    title: "当佛教远行",
+    pages: [
+      "./assets/writing/buddhism/buddhism01.png",
+      "./assets/writing/buddhism/buddhism02.png",
+    ],
+  },
+  food: {
+    title: "神的食物",
+    pages: [
+      "./assets/writing/food/FOOD1.png",
+      "./assets/writing/food/FOOD2.png",
+      "./assets/writing/food/FOOD3.png",
+      "./assets/writing/food/FOOD4.png",
+      "./assets/writing/food/FOOD5.png",
+    ],
+  },
+  beasts: {
+    title: "书页边缘的怪兽",
+    pages: [
+      "./assets/writing/beasts/怪兽p1.png",
+      "./assets/writing/beasts/怪兽p2.png",
+      "./assets/writing/beasts/怪兽p3.png",
+    ],
+  },
+};
+
+const writingSections = Array.from(document.querySelectorAll(".writing-section"));
+const writingReader = document.querySelector("#writingReader");
+const writingReaderTitle = document.querySelector("#writingReaderTitle");
+const writingReaderCurrent = document.querySelector("#writingReaderCurrent");
+const writingReaderTotal = document.querySelector("#writingReaderTotal");
+const writingReaderPage = document.querySelector("#writingReaderPage");
+const writingReaderPageWrap = document.querySelector("[data-writing-swipe]");
+const writingReaderPagination = document.querySelector("#writingReaderPagination");
+const writingReaderPrev = document.querySelector("[data-writing-prev]");
+const writingReaderNext = document.querySelector("[data-writing-next]");
+const writingReaderClose = document.querySelector("[data-writing-close]");
+
+if (writingSections.length) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    writingSections.forEach((section) => section.classList.add("is-visible"));
+  } else {
+    const writingRevealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          writingRevealObserver.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -8%", threshold: 0.18 },
+    );
+
+    writingSections.forEach((section) => writingRevealObserver.observe(section));
+  }
+}
+
+if (
+  writingReader &&
+  writingReaderTitle &&
+  writingReaderCurrent &&
+  writingReaderTotal &&
+  writingReaderPage &&
+  writingReaderPageWrap &&
+  writingReaderPagination &&
+  writingReaderPrev &&
+  writingReaderNext &&
+  writingReaderClose
+) {
+  let activeWritingWork = null;
+  let activeWritingPage = 0;
+  let writingReaderLocked = false;
+  let writingReaderTrigger = null;
+  let writingReaderScrollY = 0;
+  let writingReaderTimer = 0;
+  let writingPointerId = null;
+  let writingPointerStartX = 0;
+  let writingPointerStartY = 0;
+  let writingPointerDeltaX = 0;
+
+  const formatWritingPage = (page) => String(page + 1).padStart(2, "0");
+
+  const preloadWritingPage = (src) => {
+    if (!src) return;
+    const image = new Image();
+    image.src = src;
+  };
+
+  const preloadAdjacentWritingPages = () => {
+    if (!activeWritingWork) return;
+    preloadWritingPage(activeWritingWork.pages[activeWritingPage - 1]);
+    preloadWritingPage(activeWritingWork.pages[activeWritingPage + 1]);
+  };
+
+  const updateWritingReaderControls = () => {
+    const total = activeWritingWork?.pages.length || 0;
+    writingReaderCurrent.textContent = formatWritingPage(activeWritingPage);
+    writingReaderTotal.textContent = String(total).padStart(2, "0");
+    writingReaderPrev.disabled = activeWritingPage === 0;
+    writingReaderNext.disabled = activeWritingPage === total - 1;
+
+    Array.from(writingReaderPagination.children).forEach((button, index) => {
+      const isCurrent = index === activeWritingPage;
+      if (isCurrent) {
+        button.setAttribute("aria-current", "page");
+      } else {
+        button.removeAttribute("aria-current");
+      }
+    });
+  };
+
+  const buildWritingPagination = () => {
+    writingReaderPagination.replaceChildren();
+
+    activeWritingWork.pages.forEach((_, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("aria-label", `查看第 ${index + 1} 页`);
+      button.innerHTML = `<span>${formatWritingPage(index)}</span>`;
+      button.addEventListener("click", () => showWritingPage(index));
+      writingReaderPagination.append(button);
+    });
+  };
+
+  const setWritingPageSource = () => {
+    const src = activeWritingWork.pages[activeWritingPage];
+    writingReaderPage.src = src;
+    writingReaderPage.alt = `${activeWritingWork.title}稿件第 ${activeWritingPage + 1} 页`;
+    updateWritingReaderControls();
+    preloadAdjacentWritingPages();
+  };
+
+  function showWritingPage(nextPage, immediate = false) {
+    if (!activeWritingWork || writingReaderLocked) return;
+    if (nextPage < 0 || nextPage >= activeWritingWork.pages.length) return;
+    if (nextPage === activeWritingPage && !immediate) return;
+
+    const direction = nextPage > activeWritingPage ? "next" : "previous";
+    window.clearTimeout(writingReaderTimer);
+
+    if (immediate || reduceMotion) {
+      activeWritingPage = nextPage;
+      setWritingPageSource();
+      return;
+    }
+
+    writingReaderLocked = true;
+    writingReaderPage.classList.add(direction === "next" ? "is-exiting-left" : "is-exiting-right");
+
+    writingReaderTimer = window.setTimeout(() => {
+      activeWritingPage = nextPage;
+      writingReaderPage.className = "writing-reader__page";
+      writingReaderPage.classList.add(direction === "next" ? "is-entering-right" : "is-entering-left");
+      setWritingPageSource();
+      writingReaderPage.getBoundingClientRect();
+
+      requestAnimationFrame(() => {
+        writingReaderPage.classList.remove("is-entering-right", "is-entering-left");
+        writingReaderTimer = window.setTimeout(() => {
+          writingReaderLocked = false;
+        }, 180);
+      });
+    }, 150);
+  }
+
+  const resetWritingPointer = () => {
+    writingPointerId = null;
+    writingPointerDeltaX = 0;
+    writingReaderPageWrap.classList.remove("is-dragging");
+    writingReaderPageWrap.style.removeProperty("--writing-reader-drag-x");
+  };
+
+  const handleWritingReaderKeydown = (event) => {
+    if (writingReader.hidden) return;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeWritingReader();
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      showWritingPage(activeWritingPage - 1);
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      showWritingPage(activeWritingPage + 1);
+    }
+  };
+
+  function openWritingReader(workId, trigger) {
+    const work = writingWorks[workId];
+    if (!work) return;
+
+    activeWritingWork = work;
+    activeWritingPage = 0;
+    writingReaderTrigger = trigger;
+    writingReaderScrollY = window.scrollY;
+    writingReaderTitle.textContent = work.title;
+    buildWritingPagination();
+    setWritingPageSource();
+    writingReader.hidden = false;
+    document.body.classList.add("writing-reader-open");
+    window.addEventListener("keydown", handleWritingReaderKeydown);
+    writingReaderClose.focus();
+  }
+
+  function closeWritingReader() {
+    if (writingReader.hidden) return;
+
+    window.clearTimeout(writingReaderTimer);
+    writingReaderLocked = false;
+    resetWritingPointer();
+    writingReader.hidden = true;
+    document.body.classList.remove("writing-reader-open");
+    window.removeEventListener("keydown", handleWritingReaderKeydown);
+    window.scrollTo({ top: writingReaderScrollY, behavior: "auto" });
+    writingReaderTrigger?.focus();
+    writingReaderTrigger = null;
+  }
+
+  document.querySelectorAll("[data-writing-open]").forEach((trigger) => {
+    trigger.addEventListener("click", () => openWritingReader(trigger.dataset.writingOpen, trigger));
+  });
+
+  writingReaderClose.addEventListener("click", closeWritingReader);
+  writingReaderPrev.addEventListener("click", () => showWritingPage(activeWritingPage - 1));
+  writingReaderNext.addEventListener("click", () => showWritingPage(activeWritingPage + 1));
+
+  writingReaderPage.addEventListener("error", () => {
+    console.error(`Writing page image failed to load: ${writingReaderPage.getAttribute("src")}`);
+  });
+
+  writingReaderPageWrap.addEventListener("pointerdown", (event) => {
+    if (writingReaderLocked || (event.pointerType === "mouse" && event.button !== 0)) return;
+    writingPointerId = event.pointerId;
+    writingPointerStartX = event.clientX;
+    writingPointerStartY = event.clientY;
+    writingPointerDeltaX = 0;
+    writingReaderPageWrap.setPointerCapture(event.pointerId);
+    writingReaderPageWrap.classList.add("is-dragging");
+  });
+
+  writingReaderPageWrap.addEventListener("pointermove", (event) => {
+    if (event.pointerId !== writingPointerId) return;
+    const deltaX = event.clientX - writingPointerStartX;
+    const deltaY = event.clientY - writingPointerStartY;
+    if (Math.abs(deltaX) <= Math.abs(deltaY) || Math.abs(deltaX) < 4) return;
+    event.preventDefault();
+    writingPointerDeltaX = Math.max(-120, Math.min(120, deltaX));
+    writingReaderPageWrap.style.setProperty("--writing-reader-drag-x", `${writingPointerDeltaX}px`);
+  });
+
+  const finishWritingPointer = (event) => {
+    if (event.pointerId !== writingPointerId) return;
+    const deltaX = writingPointerDeltaX;
+    resetWritingPointer();
+
+    if (Math.abs(deltaX) < 60) return;
+    if (deltaX < 0) showWritingPage(activeWritingPage + 1);
+    if (deltaX > 0) showWritingPage(activeWritingPage - 1);
+  };
+
+  writingReaderPageWrap.addEventListener("pointerup", finishWritingPointer);
+  writingReaderPageWrap.addEventListener("pointercancel", resetWritingPointer);
 }
