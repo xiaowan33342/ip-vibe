@@ -930,19 +930,19 @@ const writingWorks = {
   food: {
     title: "神的食物",
     pages: [
-      "./assets/writing/food/FOOD1.png",
-      "./assets/writing/food/FOOD2.png",
-      "./assets/writing/food/FOOD3.png",
-      "./assets/writing/food/FOOD4.png",
-      "./assets/writing/food/FOOD5.png",
+      "./assets/writing/food/FOOD1.webp",
+      "./assets/writing/food/FOOD2.webp",
+      "./assets/writing/food/FOOD3.webp",
+      "./assets/writing/food/FOOD4.webp",
+      "./assets/writing/food/FOOD5.webp",
     ],
   },
   beasts: {
     title: "书页边缘的怪兽",
     pages: [
-      "./assets/writing/beasts/怪兽p1.png",
-      "./assets/writing/beasts/怪兽p2.png",
-      "./assets/writing/beasts/怪兽p3.png",
+      "./assets/writing/beasts/怪兽p1.webp",
+      "./assets/writing/beasts/怪兽p2.webp",
+      "./assets/writing/beasts/怪兽p3.webp",
     ],
   },
 };

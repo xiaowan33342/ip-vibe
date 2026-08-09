@@ -1071,7 +1071,8 @@ a {
   }
 
   .directory .note-xigou {
-    width: min(78%, 335px);
+    --sticker-shift-y: -12px;
+    width: min(73%, 310px);
     justify-self: end;
   }
 
@@ -3690,7 +3691,7 @@ a {
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 900px) {
   body {
     min-width: 0;
     overflow-x: hidden;
@@ -10113,6 +10114,13 @@ body.writing-reader-open {
   transform: rotate(2deg);
 }
 
+@media (min-width: 1101px) {
+  .bagou-sticker-button:nth-child(4) {
+    position: relative;
+    top: -24px;
+  }
+}
+
 .bagou-sticker-button:hover {
   filter: drop-shadow(0 8px 8px rgba(88, 55, 31, 0.12));
   transform: translateY(-4px) scale(1.02);
@@ -10185,28 +10193,6 @@ body.writing-reader-open {
   font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
   font-size: clamp(1rem, 1.3vw, 1.28rem);
   line-height: 1.65;
-}
-
-.bagou-project-ending a {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  flex: 0 0 auto;
-  color: var(--bagou-brown);
-  border-bottom: 1px solid rgba(138, 84, 46, 0.42);
-  font-size: 0.9rem;
-  font-weight: 800;
-  transition: color 220ms ease, transform 220ms ease;
-}
-
-.bagou-project-ending a:hover {
-  color: var(--bagou-clay);
-  transform: translateY(-2px);
-}
-
-.bagou-project-ending a:focus-visible {
-  outline: 3px solid rgba(185, 109, 77, 0.3);
-  outline-offset: 5px;
 }
 
 @keyframes bagouSleepBreath {
@@ -10388,7 +10374,6 @@ body.writing-reader-open {
   .bagou-hero-preview,
   .bagou-pack-preview img,
   .bagou-sticker-button,
-  .bagou-project-ending a,
   .mini-ip-entry--bagou {
     transform: none;
     transition-duration: 0.01ms;
@@ -10976,7 +10961,6 @@ body.writing-reader-open {
 
 .next-project--bagou {
   --next-project-color: var(--bagou-brown);
-  bottom: clamp(136px, 17vh, 154px);
 }
 
 .next-project--maomao {
@@ -10987,6 +10971,12 @@ body.writing-reader-open {
   --next-project-color: var(--pupu-ink);
   right: 8px;
   min-width: 100px;
+}
+
+@media (min-width: 768px) and (max-width: 900px) {
+  .next-project--bagou {
+    bottom: 14px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -11007,7 +10997,7 @@ body.writing-reader-open {
   }
 
   .next-project--bagou {
-    bottom: 72px;
+    bottom: 5px;
   }
 
   .next-project--pupu {
