@@ -548,6 +548,27 @@ if (xigouRevealItems.length) {
   }
 }
 
+const pupuProject = document.querySelector("#pupu");
+
+if (pupuProject) {
+  const enterPupuProject = () => pupuProject.classList.add("is-entered");
+
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    enterPupuProject();
+  } else {
+    const pupuProjectObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        enterPupuProject();
+        pupuProjectObserver.disconnect();
+      },
+      { threshold: 0.64 },
+    );
+
+    pupuProjectObserver.observe(pupuProject);
+  }
+}
+
 const lightbox = document.querySelector("#lightbox");
 const lightboxImage = document.querySelector("#lightboxImage");
 const lightboxCaption = document.querySelector("#lightboxCaption");
